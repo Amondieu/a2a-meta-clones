@@ -1,0 +1,5 @@
+{
+  "name": "a2a-meta-clones-slot-b",
+  "healthcheckPath": "/health",
+  "healthcheckTimeout": 30
+}

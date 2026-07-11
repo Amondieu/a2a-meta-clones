@@ -1,0 +1,49 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.Amondieu/audit-bazaar",
+  "description": "94/100 · EU-native · SOC 2 Type II ready — Enterprises cannot address audit-ready evidence for marketplace agents as third-party services: Enterprises cannot collect immutable logs, drift checks, or PII flow evidence for marketplace-sourced agents because marketplaces lack standardized telemetry exports required for SOC 2 third-party risk management.",
+  "version": "1.0.0",
+  "metadata": {
+    "clone_id": "Audit-Ready Evidence for Marketplace Agents as Third-Party Services-gen-1",
+    "archetype": "AuditorScribe",
+    "category": "agent_marketplace",
+    "regulatory_focus": [
+      "SOC 2"
+    ],
+    "tools": [
+      "run_reconciliation_audit"
+    ],
+    "pricing": {
+      "free": {
+        "usd_per_month": 0,
+        "calls_per_month": 500
+      },
+      "solo": {
+        "usd_per_month": 24,
+        "calls_per_month": 500
+      },
+      "pro": {
+        "usd_per_month": 89,
+        "calls_per_month": 3000
+      },
+      "team": {
+        "usd_per_month": 249,
+        "calls_per_month": 15000
+      },
+      "overage": {
+        "usd_per_call": 0.05,
+        "metered": true
+      }
+    },
+    "tagline": "94/100 · EU-native · SOC 2 Type II ready",
+    "eu_ai_act_deadline": "2026-08-02",
+    "founder_origin": "EU-native, Strasbourg",
+    "accuracy_score": "94/100"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://service-a-production-9303.up.railway.app/clone/audit-bazaar/mcp"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "clone_id": "Agent Identity and Least Agency Authorization-gen-2",
+  "parent_id": "seed-meta-nucleus-v1",
+  "generation": 2,
+  "name": "Agent Lens",
+  "tagline": "94/100 · EU-native · NIST AI RMF 1.0",
+  "description": "Enterprises cannot address agent identity and least agency authorization: Agents run under shared or over-privileged service accounts lacking distinct identities; enterprises cannot apply fine-grained access controls or limit autonomy beyond simple permission scopes.",
+  "archetype_class": "AuditorScribe",
+  "gap_name": "Agent Identity and Least Agency Authorization",
+  "category": "agent_governance",
+  "service_type": "devtool",
+  "regulatory_focus": [
+    "NIST AI RMF"
+  ],
+  "impact_score": 0.95,
+  "service": "service-a",
+  "slug": "agent-lens",
+  "mcp_path": "/clone/agent-lens/mcp",
+  "exposed_tools": [
+    {
+      "name": "run_reconciliation_audit",
+      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "parameters": {
+        "payload": {
+          "type": "string",
+          "description": "The ledger transaction entries in string format.",
+          "required": true,
+          "default": null
+        }
+      },
+      "tier": "logic",
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "string",
+            "description": "The ledger transaction entries in string format."
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    }
+  ],
+  "security_policy": {
+    "network_access": true,
+    "allowed_domains": [],
+    "file_system_access": "none",
+    "max_execution_time_ms": 2000,
+    "user_approval_required_for_mutative_actions": true
+  },
+  "monetization": {
+    "billing_type": "tiered_subscription_plus_overage",
+    "domain": "compliance",
+    "tiers": {
+      "free": {
+        "usd_per_month": 0,
+        "calls_per_month": 500
+      },
+      "solo": {
+        "usd_per_month": 24,
+        "calls_per_month": 500
+      },
+      "pro": {
+        "usd_per_month": 79,
+        "calls_per_month": 3000
+      },
+      "team": {
+        "usd_per_month": 199,
+        "calls_per_month": 15000
+      },
+      "overage": {
+        "usd_per_call": 0.05,
+        "metered": true
+      }
+    },
+    "currency": "USD",
+    "pricing_source": "pricing.json (VALIDATED, a2a-meta-064)"
+  },
+  "provider_routing": {
+    "proxy_env": "LITELLM_BASE_URL",
+    "tier_alias_map": {
+      "logic": null,
+      "lightweight": "flash-k2",
+      "heavy": "kore-builder",
+      "heavy_fallback": "deepseek-flash"
+    },
+    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+  },
+  "parent_tension_id": null,
+  "checksum": "dbbb7ee233b87f3ca43fa1e21be4a6f6c55b24dcdb1e3674f6de4d4467b9dd3a"
+}

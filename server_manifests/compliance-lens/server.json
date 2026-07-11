@@ -1,0 +1,51 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.Amondieu/compliance-lens",
+  "description": "94/100 · EU-native · Compliance system cards — Enterprises cannot address compliance-grade agent metadata and system cards: Risk and compliance teams cannot reliably determine underlying models, GPAI systemic risk status, training data summaries, or performance metrics, preventing mapping to NIST AI RMF, ISO 42001 inventories, and SOC 2 risk matrices.",
+  "version": "1.0.0",
+  "metadata": {
+    "clone_id": "Compliance-Grade Agent Metadata and System Cards-gen-2",
+    "archetype": "AuditorScribe",
+    "category": "agent_marketplace",
+    "regulatory_focus": [
+      "NIST AI RMF",
+      "ISO 42001",
+      "SOC 2"
+    ],
+    "tools": [
+      "run_reconciliation_audit"
+    ],
+    "pricing": {
+      "free": {
+        "usd_per_month": 0,
+        "calls_per_month": 500
+      },
+      "solo": {
+        "usd_per_month": 24,
+        "calls_per_month": 500
+      },
+      "pro": {
+        "usd_per_month": 69,
+        "calls_per_month": 3000
+      },
+      "team": {
+        "usd_per_month": 199,
+        "calls_per_month": 15000
+      },
+      "overage": {
+        "usd_per_call": 0.05,
+        "metered": true
+      }
+    },
+    "tagline": "94/100 · EU-native · Compliance system cards",
+    "eu_ai_act_deadline": "2026-08-02",
+    "founder_origin": "EU-native, Strasbourg",
+    "accuracy_score": "94/100"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://service-c-production.up.railway.app/clone/compliance-lens/mcp"
+    }
+  ]
+}

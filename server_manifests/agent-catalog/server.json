@@ -1,0 +1,43 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.Amondieu/agent-catalog",
+  "description": "94/100 · EU-native · EU AI Act GPAI Art. 53 — Enterprises cannot address eu ai act gpai and copyright workflow support: Marketplaces fail to surface technical documentation, training summaries, or copyright compliance status for underlying GPAI models, leaving buyers unable to verify EU AI Act obligations or satisfy rights-holder data requests.",
+  "version": "1.0.0",
+  "metadata": {
+    "clone_id": "EU AI Act GPAI and Copyright Workflow Support-gen-2",
+    "archetype": "AuditorScribe",
+    "category": "agent_marketplace",
+    "regulatory_focus": [
+      "EU AI Act"
+    ],
+    "tools": [
+      "run_reconciliation_audit"
+    ],
+    "pricing": {
+      "free": {
+        "usd_per_month": 0,
+        "calls_per_month": 500
+      },
+      "solo": {
+        "usd_per_month": 24,
+        "calls_per_month": 500
+      },
+      "pro": {
+        "usd_per_month": 89,
+        "calls_per_month": 3000
+      },
+      "team": {
+        "usd_per_month": 249,
+        "calls_per_month": 15000
+      },
+      "overage": {
+        "usd_per_call": 0.05,
+        "metered": true
+      }
+    },
+    "tagline": "94/100 · EU-native · EU AI Act GPAI Art. 53",
+    "eu_ai_act_deadline": "2026-08-02",
+    "founder_origin": "EU-native, Strasbourg",
+    "accuracy_score": "94/100"
+  }
+}

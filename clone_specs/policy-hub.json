@@ -1,0 +1,95 @@
+{
+  "clone_id": "Runtime Policy Enforcement and Guardrails-gen-2",
+  "parent_id": "seed-meta-nucleus-v1",
+  "generation": 2,
+  "name": "Policy Hub",
+  "tagline": "94/100 · EU-native · AI governance Aug 2",
+  "description": "Enterprises cannot address runtime policy enforcement and guardrails: Governance policies remain offline and advisory; agents operate without real-time constraints, leading to data exfiltration, unauthorized system changes, or harmful outputs due to ambiguous instructions or adversarial prompts.",
+  "archetype_class": "AuditorScribe",
+  "gap_name": "Runtime Policy Enforcement and Guardrails",
+  "category": "agent_runtime",
+  "service_type": "platform",
+  "regulatory_focus": [
+    "NIST AI RMF",
+    "ISO 42001"
+  ],
+  "impact_score": 0.95,
+  "service": "service-b",
+  "slug": "policy-hub",
+  "mcp_path": "/clone/policy-hub/mcp",
+  "exposed_tools": [
+    {
+      "name": "run_reconciliation_audit",
+      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "parameters": {
+        "payload": {
+          "type": "string",
+          "description": "The ledger transaction entries in string format.",
+          "required": true,
+          "default": null
+        }
+      },
+      "tier": "logic",
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "string",
+            "description": "The ledger transaction entries in string format."
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    }
+  ],
+  "security_policy": {
+    "network_access": true,
+    "allowed_domains": [],
+    "file_system_access": "none",
+    "max_execution_time_ms": 2000,
+    "user_approval_required_for_mutative_actions": true
+  },
+  "monetization": {
+    "billing_type": "tiered_subscription_plus_overage",
+    "domain": "compliance",
+    "tiers": {
+      "free": {
+        "usd_per_month": 0,
+        "calls_per_month": 500
+      },
+      "solo": {
+        "usd_per_month": 24,
+        "calls_per_month": 500
+      },
+      "pro": {
+        "usd_per_month": 79,
+        "calls_per_month": 3000
+      },
+      "team": {
+        "usd_per_month": 199,
+        "calls_per_month": 15000
+      },
+      "overage": {
+        "usd_per_call": 0.05,
+        "metered": true
+      }
+    },
+    "currency": "USD",
+    "pricing_source": "pricing.json (VALIDATED, a2a-meta-064)"
+  },
+  "provider_routing": {
+    "proxy_env": "LITELLM_BASE_URL",
+    "tier_alias_map": {
+      "logic": null,
+      "lightweight": "flash-k2",
+      "heavy": "kore-builder",
+      "heavy_fallback": "deepseek-flash"
+    },
+    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+  },
+  "parent_tension_id": null,
+  "checksum": "9440529bcc20836c9c5e4168a73090bc4908cf692fc90e63ac2f091d2a28ffc6"
+}

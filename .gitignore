@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Local env (NEVER commit; use .env.example as a template)
+.env
+.env.local
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache
+coverage.xml
+*.cover
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Build artifacts
+node_modules/
+dist/
+build/
+
+# Railway / deployment
+.railway-deploy/
+
+# Promotion artifacts (these are write-once per promotion, not source)
+promotion_request_*.json
+
+# Logs
+*.log

@@ -1,0 +1,94 @@
+{
+  "clone_id": "Runtime Security and Adversarial Resilience-gen-2",
+  "parent_id": "seed-meta-nucleus-v1",
+  "generation": 2,
+  "name": "Agent Vault",
+  "tagline": "94/100 · EU-native · ISO 42001:2023",
+  "description": "Enterprises cannot address runtime security and adversarial resilience: Immature detection of agent-specific vulnerabilities like indirect prompt injection and memory poisoning; lack of runtime controls to mitigate attacks on tools and supply chains during deployment.",
+  "archetype_class": "AuditorScribe",
+  "gap_name": "Runtime Security and Adversarial Resilience",
+  "category": "agent_runtime",
+  "service_type": "runtime",
+  "regulatory_focus": [
+    "ISO 42001"
+  ],
+  "impact_score": 0.92,
+  "service": "service-b",
+  "slug": "agent-vault",
+  "mcp_path": "/clone/agent-vault/mcp",
+  "exposed_tools": [
+    {
+      "name": "run_reconciliation_audit",
+      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "parameters": {
+        "payload": {
+          "type": "string",
+          "description": "The ledger transaction entries in string format.",
+          "required": true,
+          "default": null
+        }
+      },
+      "tier": "logic",
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "string",
+            "description": "The ledger transaction entries in string format."
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    }
+  ],
+  "security_policy": {
+    "network_access": true,
+    "allowed_domains": [],
+    "file_system_access": "none",
+    "max_execution_time_ms": 2000,
+    "user_approval_required_for_mutative_actions": true
+  },
+  "monetization": {
+    "billing_type": "tiered_subscription_plus_overage",
+    "domain": "compliance",
+    "tiers": {
+      "free": {
+        "usd_per_month": 0,
+        "calls_per_month": 500
+      },
+      "solo": {
+        "usd_per_month": 24,
+        "calls_per_month": 500
+      },
+      "pro": {
+        "usd_per_month": 69,
+        "calls_per_month": 3000
+      },
+      "team": {
+        "usd_per_month": 199,
+        "calls_per_month": 15000
+      },
+      "overage": {
+        "usd_per_call": 0.05,
+        "metered": true
+      }
+    },
+    "currency": "USD",
+    "pricing_source": "pricing.json (VALIDATED, a2a-meta-064)"
+  },
+  "provider_routing": {
+    "proxy_env": "LITELLM_BASE_URL",
+    "tier_alias_map": {
+      "logic": null,
+      "lightweight": "flash-k2",
+      "heavy": "kore-builder",
+      "heavy_fallback": "deepseek-flash"
+    },
+    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+  },
+  "parent_tension_id": null,
+  "checksum": "3087f2c16683873b6865d3e39e162eb86d4411c5800f2cbe0f7532949a68362a"
+}

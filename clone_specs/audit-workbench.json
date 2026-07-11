@@ -1,0 +1,96 @@
+{
+  "clone_id": "Cross-Stack Provenance & Audit Artifact Generation-gen-2",
+  "parent_id": "seed-meta-nucleus-v1",
+  "generation": 2,
+  "name": "Audit Workbench",
+  "tagline": "94/100 · EU-native · Audit artifacts Aug 2",
+  "description": "Enterprises cannot address cross-stack provenance & audit artifact generation: Inability to automatically generate cross-stack provenance and audit artifacts aligned to EU AI Act, ISO 42001, and SOC 2; internal teams must manually extract and transform data into regulatory documentation.",
+  "archetype_class": "AuditorScribe",
+  "gap_name": "Cross-Stack Provenance & Audit Artifact Generation",
+  "category": "agent_devtools",
+  "service_type": "devtool",
+  "regulatory_focus": [
+    "EU AI Act",
+    "ISO 42001",
+    "SOC 2"
+  ],
+  "impact_score": 0.94,
+  "service": "service-a",
+  "slug": "audit-workbench",
+  "mcp_path": "/clone/audit-workbench/mcp",
+  "exposed_tools": [
+    {
+      "name": "run_reconciliation_audit",
+      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "parameters": {
+        "payload": {
+          "type": "string",
+          "description": "The ledger transaction entries in string format.",
+          "required": true,
+          "default": null
+        }
+      },
+      "tier": "logic",
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "string",
+            "description": "The ledger transaction entries in string format."
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    }
+  ],
+  "security_policy": {
+    "network_access": true,
+    "allowed_domains": [],
+    "file_system_access": "none",
+    "max_execution_time_ms": 2000,
+    "user_approval_required_for_mutative_actions": true
+  },
+  "monetization": {
+    "billing_type": "tiered_subscription_plus_overage",
+    "domain": "compliance",
+    "tiers": {
+      "free": {
+        "usd_per_month": 0,
+        "calls_per_month": 500
+      },
+      "solo": {
+        "usd_per_month": 24,
+        "calls_per_month": 500
+      },
+      "pro": {
+        "usd_per_month": 69,
+        "calls_per_month": 3000
+      },
+      "team": {
+        "usd_per_month": 199,
+        "calls_per_month": 15000
+      },
+      "overage": {
+        "usd_per_call": 0.05,
+        "metered": true
+      }
+    },
+    "currency": "USD",
+    "pricing_source": "pricing.json (VALIDATED, a2a-meta-064)"
+  },
+  "provider_routing": {
+    "proxy_env": "LITELLM_BASE_URL",
+    "tier_alias_map": {
+      "logic": null,
+      "lightweight": "flash-k2",
+      "heavy": "kore-builder",
+      "heavy_fallback": "deepseek-flash"
+    },
+    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+  },
+  "parent_tension_id": null,
+  "checksum": "2ec6f928556991347839e7f28721c2cf8a68104fa0ed827bbecfacc5d135ff4f"
+}

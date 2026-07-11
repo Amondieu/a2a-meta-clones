@@ -1,0 +1,51 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.Amondieu/audit-workbench",
+  "description": "94/100 · EU-native · Audit artifacts Aug 2 — Enterprises cannot address cross-stack provenance & audit artifact generation: Inability to automatically generate cross-stack provenance and audit artifacts aligned to EU AI Act, ISO 42001, and SOC 2; internal teams must manually extract and transform data into regulatory documentation.",
+  "version": "1.0.0",
+  "metadata": {
+    "clone_id": "Cross-Stack Provenance & Audit Artifact Generation-gen-2",
+    "archetype": "AuditorScribe",
+    "category": "agent_devtools",
+    "regulatory_focus": [
+      "EU AI Act",
+      "ISO 42001",
+      "SOC 2"
+    ],
+    "tools": [
+      "run_reconciliation_audit"
+    ],
+    "pricing": {
+      "free": {
+        "usd_per_month": 0,
+        "calls_per_month": 500
+      },
+      "solo": {
+        "usd_per_month": 24,
+        "calls_per_month": 500
+      },
+      "pro": {
+        "usd_per_month": 69,
+        "calls_per_month": 3000
+      },
+      "team": {
+        "usd_per_month": 199,
+        "calls_per_month": 15000
+      },
+      "overage": {
+        "usd_per_call": 0.05,
+        "metered": true
+      }
+    },
+    "tagline": "94/100 · EU-native · Audit artifacts Aug 2",
+    "eu_ai_act_deadline": "2026-08-02",
+    "founder_origin": "EU-native, Strasbourg",
+    "accuracy_score": "94/100"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://service-a-production-9303.up.railway.app/clone/audit-workbench/mcp"
+    }
+  ]
+}
