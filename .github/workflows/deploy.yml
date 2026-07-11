@@ -1,0 +1,15 @@
+name: Deploy to Railway
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject Infisical secrets
+        uses: infisical/secrets-action@v1
+        with:
+          env: dev
+      - uses: railway/actions/deploy@v1
+        with:
+          railway-token: ${{ secrets.RAILWAY_TOKEN }}
