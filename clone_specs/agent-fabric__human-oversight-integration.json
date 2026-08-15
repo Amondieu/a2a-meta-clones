@@ -18,29 +18,22 @@
   "mcp_path": "/clone/agent-fabric/mcp",
   "exposed_tools": [
     {
-      "name": "run_reconciliation_audit",
-      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
-      "parameters": {
-        "payload": {
-          "type": "string",
-          "description": "The ledger transaction entries in string format.",
-          "required": true,
-          "default": null
-        }
-      },
+      "name": "assess_human_oversight",
+      "description": "Assess EU AI Act Art. 14 human oversight controls (interrupt, override, UI, logging, escalation) at decision points. Deterministic; zero LLM.",
       "tier": "logic",
+      "parameters": {
+        "agent_name": {"type": "string"},
+        "controls": {"type": "object"},
+        "decision_points": {"type": "array"}
+      },
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-          "payload": {
-            "type": "string",
-            "description": "The ledger transaction entries in string format."
-          }
-        },
-        "required": [
-          "payload"
-        ]
+          "agent_name": {"type": "string"},
+          "controls": {"type": "object"},
+          "decision_points": {"type": "array", "items": {"type": "string"}}
+        }
       }
     }
   ],
@@ -90,5 +83,5 @@
     "direct_provider_calls": "forbidden (SOUL.md §0.5)"
   },
   "parent_tension_id": null,
-  "checksum": "7bd04ed9f5cf73aaf50cd51dc402a25f14b3d840d51a52b4d4734aedbb4d5e8f"
+  "checksum": "human-oversight-tools-v1"
 }

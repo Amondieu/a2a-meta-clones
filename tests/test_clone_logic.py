@@ -30,12 +30,32 @@ def test_audit_bazaar_evidence():
 
 def test_agent_fabric_flags_shell():
     out = dispatch(
-        "agent-fabric",
+        "agent-fabric-threat-model",
         "assess_mcp_threat_posture",
         {"tools": [{"name": "shell_exec"}], "permissions": ["admin"]},
     )
     assert out["grade"] in ("C", "D")
     assert out["findings"]
+
+
+def test_agent_fabric_live_human_oversight():
+    out = dispatch(
+        "agent-fabric",
+        "assess_human_oversight",
+        {
+            "agent_name": "ops-bot",
+            "controls": {
+                "human_can_interrupt": True,
+                "human_can_override": True,
+                "oversight_ui": True,
+                "decision_logging": True,
+                "escalation_path": True,
+            },
+            "decision_points": ["refund"],
+        },
+    )
+    assert out["grade"] == "A"
+    assert out["loop"] == "eu_ai_act_art14_human_oversight"
 
 
 def test_each_clone_has_handler():
