@@ -127,12 +127,14 @@ def webhook_secret() -> str:
 
 
 def public_base_url() -> str:
+    # Prefer Railway-injected domain — always correct per service.
+    # Explicit PUBLIC_BASE_URL can drift when secrets are copied across slots.
+    domain = (os.environ.get("RAILWAY_PUBLIC_DOMAIN") or "").strip()
+    if domain:
+        return f"https://{domain.rstrip('/')}"
     explicit = (os.environ.get("PUBLIC_BASE_URL") or "").strip().rstrip("/")
     if explicit:
         return explicit
-    domain = (os.environ.get("RAILWAY_PUBLIC_DOMAIN") or "").strip()
-    if domain:
-        return f"https://{domain}"
     return DEFAULT_PUBLIC_BASE
 
 
