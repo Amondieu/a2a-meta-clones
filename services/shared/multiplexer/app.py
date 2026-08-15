@@ -33,8 +33,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from pydantic import BaseModel
+
+try:
+    from services.shared.multiplexer import pay2go_stripe as pay2go
+except ImportError:  # pragma: no cover — file-loaded unit tests
+    from . import pay2go_stripe as pay2go  # type: ignore
 
 
 log = logging.getLogger("gold-seed.multiplexer")
@@ -173,6 +178,9 @@ def root() -> Dict[str, Any]:
             "attestation": "/.well-known/attestation.json",
             "openapi": "/.well-known/openapi.yaml",
             "landing": "/static/audit-bazaar.html",
+            "stripe_checkout": "/api/stripe/checkout",
+            "stripe_webhook": "/api/stripe/webhook",
+            "stripe_team_webhook": "/api/stripe/team-webhook",
             "clone_manifest": "/clone/{id}/mcp",
             "clone_health": "/clone/{id}/health",
             "clone_tools": "/clone/{id}/tools",
@@ -288,6 +296,95 @@ def static_audit_bazaar_landing() -> FileResponse:
     if not _LANDING_HTML.is_file():
         raise HTTPException(404, "landing page missing: static/audit-bazaar.html")
     return FileResponse(_LANDING_HTML, media_type="text/html; charset=utf-8")
+
+
+class CheckoutBody(BaseModel):
+    tier: str
+    customer_email: Optional[str] = None
+    success_url: Optional[str] = None
+    cancel_url: Optional[str] = None
+    client_reference_id: Optional[str] = None
+
+
+@app.post("/api/stripe/checkout")
+def stripe_checkout_create(body: CheckoutBody) -> Dict[str, Any]:
+    """Create a Stripe Checkout Session for solo|pro|team (subscription)."""
+    try:
+        return pay2go.create_checkout_session(
+            body.tier,
+            customer_email=body.customer_email,
+            success_url=body.success_url,
+            cancel_url=body.cancel_url,
+            client_reference_id=body.client_reference_id,
+        )
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    except RuntimeError as e:
+        raise HTTPException(503, str(e)) from e
+
+
+@app.get("/api/stripe/checkout")
+def stripe_checkout_redirect(tier: str = "pro") -> RedirectResponse:
+    """Landing convenience: 303 → Stripe Checkout URL."""
+    try:
+        session = pay2go.create_checkout_session(tier)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    except RuntimeError as e:
+        raise HTTPException(503, str(e)) from e
+    url = session.get("url")
+    if not url:
+        raise HTTPException(502, "Stripe session missing url")
+    return RedirectResponse(url=url, status_code=303)
+
+
+async def _stripe_webhook_impl(request: Request) -> JSONResponse:
+    raw = await request.body()
+    sig = request.headers.get("stripe-signature")
+    secret = pay2go.webhook_secret()
+    if not secret:
+        raise HTTPException(
+            503,
+            "Webhook secret not configured "
+            "(STRIPE_WEBHOOK_SECRET_LIVE / _TEST / STRIPE_WEBHOOK_SECRET)",
+        )
+    if not pay2go.verify_signature(raw, sig, secret):
+        raise HTTPException(400, "invalid Stripe-Signature")
+    try:
+        event = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+        raise HTTPException(400, f"invalid JSON: {e}") from e
+    result = pay2go.handle_webhook_event(event)
+    return JSONResponse({"ok": True, **result})
+
+
+@app.post("/api/stripe/webhook")
+async def stripe_webhook(request: Request) -> JSONResponse:
+    return await _stripe_webhook_impl(request)
+
+
+@app.post("/api/stripe/team-webhook")
+async def stripe_team_webhook(request: Request) -> JSONResponse:
+    """Alias for existing Stripe Dashboard endpoint URL."""
+    return await _stripe_webhook_impl(request)
+
+
+@app.get("/api/stripe/entitlements")
+def stripe_entitlements(
+    customer_id: Optional[str] = None,
+    email: Optional[str] = None,
+    x_agent_key: Optional[str] = Header(default=None, alias="X-Agent-Key"),
+) -> Dict[str, Any]:
+    """Lookup entitlement (MPP stub via X-Agent-Key or query params)."""
+    if x_agent_key:
+        ent = pay2go.agent_key_lookup(x_agent_key)
+        if not ent:
+            raise HTTPException(404, "no entitlement for agent key")
+        return {"entitlement": ent, "via": "X-Agent-Key"}
+    ent = pay2go.get_entitlement(customer_id=customer_id, email=email)
+    if not ent:
+        raise HTTPException(404, "no entitlement found")
+    return {"entitlement": ent}
 
 
 def _find_clone(clone_id: str) -> CloneSlot:

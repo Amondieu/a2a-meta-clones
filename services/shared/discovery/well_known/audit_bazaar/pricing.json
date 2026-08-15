@@ -15,18 +15,24 @@
   "recommended_tier_id": "pro",
   "payment_rails": {
     "stripe": {
-      "status": "partial",
+      "status": "checkout_live",
       "billing": "subscription_plus_overage",
-      "note": "Human or agent-key (MPP) path. Solo/Pro LIVE price ids set; Team via TEAM_PRICE_ID EUR. Checkout Session + webhook + usage report still to wire.",
+      "note": "POST/GET /api/stripe/checkout creates Stripe Checkout Session. Webhook: /api/stripe/webhook (+ /api/stripe/team-webhook alias). MPP agent-key still planned.",
       "mpp": {
         "status": "planned",
         "agent_key_header": "X-Agent-Key",
-        "usage_unit": "evidence_call"
+        "usage_unit": "evidence_call",
+        "entitlements_path": "/api/stripe/entitlements"
       },
       "checkout": {
+        "endpoint": "/api/stripe/checkout",
         "solo_price_id": "price_1U4fJxGpyUjJ8qvea7BUGNKH",
         "pro_price_id": "price_1U4fJxGpyUjJ8qvecos5yTMV",
         "team_price_id_env": "TEAM_PRICE_ID"
+      },
+      "webhook": {
+        "endpoint": "/api/stripe/webhook",
+        "alias": "/api/stripe/team-webhook"
       }
     },
     "x402": {
