@@ -1,18 +1,49 @@
 {
-  "fable5_signature": "F5-2026-08-15-audit-bazaar-pay2go-pricing-lock",
-  "$comment": "LOCKED 2026-08-15 (NichenRun9). Free 100 / Solo $29@1k / Pro $99@5k recommended / Team EUR 249@15k / overage $0.05. Source: NichenRun9_PricingMarketSanityCheck.md. Team checkout is Stripe LIVE EUR; Solo/Pro USD until EUR prices minted.",
+  "fable5_signature": "F5-2026-08-15-audit-bazaar-pay2go-hybrid-rails",
+  "$comment": "LOCKED ladder NichenRun9. Hybrid rails per references/pay2go-machine-payable.md: stripe=subscription/prepaid (live price ids); x402=true Pay2Go micropay per evidence_call (planned until payTo+facilitator). Subscription ≠ x402 Pay2Go.",
   "currency": "USD",
   "public": true,
   "overage_disclosed": true,
   "billing_unit": "evidence_call",
   "unit_aliases": ["per_evidence_pack", "per_invoke"],
   "quotable_before_call": true,
-  "paymentMethods": ["stripe"],
+  "paymentMethods": ["stripe", "x402"],
   "refundPolicy": "failed_invokes_not_metered",
   "self_service_signup": "https://a2a-meta-clones-production.up.railway.app/static/audit-bazaar.html",
   "private_offer_contact": "hallo@withkodex.com",
   "quote_endpoint": null,
   "recommended_tier_id": "pro",
+  "payment_rails": {
+    "stripe": {
+      "status": "partial",
+      "billing": "subscription_plus_overage",
+      "note": "Human or agent-key (MPP) path. Solo/Pro LIVE price ids set; Team via TEAM_PRICE_ID EUR. Checkout Session + webhook + usage report still to wire.",
+      "mpp": {
+        "status": "planned",
+        "agent_key_header": "X-Agent-Key",
+        "usage_unit": "evidence_call"
+      },
+      "checkout": {
+        "solo_price_id": "price_1U4fJxGpyUjJ8qvea7BUGNKH",
+        "pro_price_id": "price_1U4fJxGpyUjJ8qvecos5yTMV",
+        "team_price_id_env": "TEAM_PRICE_ID"
+      }
+    },
+    "x402": {
+      "status": "planned",
+      "protocol": "x402",
+      "x402Version": 2,
+      "unit": "evidence_call",
+      "amount_usd": 0.05,
+      "network": "eip155:8453",
+      "asset": "USDC",
+      "asset_contract": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "payTo": null,
+      "maxTimeoutSeconds": 60,
+      "facilitator": null,
+      "note": "True machine Pay2Go: HTTP 402 → PAYMENT-SIGNATURE → 200. payTo + facilitator required before status=live."
+    }
+  },
   "volumeTiers": [
     {
       "id": "free",
@@ -52,7 +83,8 @@
   "overage": {
     "amount_per_unit": 0.05,
     "metered": true,
-    "unit": "evidence_call"
+    "unit": "evidence_call",
+    "x402_aligned": true
   },
   "pilot_offer": {
     "description": "Human-buyer pilot SKU (not auto-metered Pay2Go). Ledger-safe deliverables only.",
@@ -64,6 +96,6 @@
   },
   "licenseTerms": null,
   "rateLimits": {
-    "note": "Free soft-cap = included_calls_per_month; paid tiers soft-cap then overage"
+    "note": "Free soft-cap = included_calls_per_month; paid tiers soft-cap then overage/x402"
   }
 }
