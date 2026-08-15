@@ -33,6 +33,11 @@
       "webhook": {
         "endpoint": "/api/stripe/webhook",
         "alias": "/api/stripe/team-webhook"
+      },
+      "meter": {
+        "unit": "evidence_call",
+        "status": "planned_on_succeeded",
+        "note": "Overage $0.05/evidence_call disclosed; Stripe Billing Meter + Checkout meter line not attached yet (discovery-auditor scan_run meter is separate)."
       }
     },
     "x402": {
