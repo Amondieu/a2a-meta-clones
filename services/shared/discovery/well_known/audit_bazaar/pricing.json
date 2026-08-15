@@ -27,7 +27,8 @@
       "upTo": 1000,
       "amount_per_month": 29,
       "included_calls_per_month": 1000,
-      "best_for": "Indie / single-agent production"
+      "best_for": "Indie / single-agent production",
+      "stripe_live_price_id": "price_1U4fJxGpyUjJ8qvea7BUGNKH"
     },
     {
       "id": "pro",
@@ -35,7 +36,8 @@
       "amount_per_month": 99,
       "included_calls_per_month": 5000,
       "recommended": true,
-      "best_for": "Growing teams; recommended self-serve"
+      "best_for": "Growing teams; recommended self-serve",
+      "stripe_live_price_id": "price_1U4fJxGpyUjJ8qvecos5yTMV"
     },
     {
       "id": "team",
