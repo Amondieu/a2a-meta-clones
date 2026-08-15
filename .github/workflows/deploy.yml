@@ -1,15 +1,35 @@
 name: Deploy to Railway
-on: [push]
+on:
+  push:
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Inject Infisical secrets
-        uses: infisical/secrets-action@v1
+
+      - name: Setup Node (Railway CLI)
+        uses: actions/setup-node@v4
         with:
-          env: dev
-      - uses: railway/actions/deploy@v1
-        with:
-          railway-token: ${{ secrets.RAILWAY_TOKEN }}
+          node-version: "20"
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy a2a-meta-clones
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RAILWAY_TOKEN:-}" ]; then
+            echo "RAILWAY_TOKEN secret missing" >&2
+            exit 1
+          fi
+          # Link by project id when provided; otherwise rely on railway.toml / prior link.
+          if [ -n "${RAILWAY_PROJECT_ID:-}" ]; then
+            railway link --project "$RAILWAY_PROJECT_ID" --environment production --yes || true
+          fi
+          railway up --service a2a-meta-clones --detach
+          railway up --service a2a-meta-clones-slot-2 --detach
