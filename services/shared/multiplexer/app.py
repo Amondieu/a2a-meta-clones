@@ -9,6 +9,7 @@ env, loads the clone specs, and exposes:
   - GET  /.well-known/pricing.json    — Pay2Go quotable pricing
   - GET  /.well-known/trust-signals.json — ledger-verified claims only
   - GET  /.well-known/attestation.json — attestation pointer
+  - GET  /.well-known/openapi.yaml    — OpenAPI 3.1 Eval API contract
   - GET  /clone/{id}/mcp              — clone manifest (per clone)
   - GET  /clone/{id}/health           — health check
   - GET  /clone/{id}/tools            — list of tool definitions
@@ -31,7 +32,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 
@@ -169,6 +170,7 @@ def root() -> Dict[str, Any]:
             "pricing": "/.well-known/pricing.json",
             "trust_signals": "/.well-known/trust-signals.json",
             "attestation": "/.well-known/attestation.json",
+            "openapi": "/.well-known/openapi.yaml",
             "clone_manifest": "/clone/{id}/mcp",
             "clone_health": "/clone/{id}/health",
             "clone_tools": "/clone/{id}/tools",
@@ -186,6 +188,7 @@ _WELL_KNOWN_AUDIT_BAZAAR = (
     / "well_known"
     / "audit_bazaar"
 )
+_OPENAPI_YAML = Path(__file__).resolve().parent.parent / "discovery" / "openapi.yaml"
 
 
 def _load_well_known(filename: str) -> Dict[str, Any]:
@@ -212,6 +215,7 @@ def well_known() -> Dict[str, Any]:
             "pricing": "/.well-known/pricing.json",
             "trust_signals": "/.well-known/trust-signals.json",
             "attestation": "/.well-known/attestation.json",
+            "openapi": "/.well-known/openapi.yaml",
         },
         "servers": [
             {
@@ -260,6 +264,17 @@ def well_known_trust_signals() -> Dict[str, Any]:
 def well_known_attestation() -> Dict[str, Any]:
     """Attestation pointer — template_only until production-signed."""
     return _load_well_known("attestation.json")
+
+
+@app.get("/.well-known/openapi.yaml")
+def well_known_openapi() -> Response:
+    """OpenAPI 3.1 Eval API contract (closes agent-card documentationUrl)."""
+    if not _OPENAPI_YAML.is_file():
+        raise HTTPException(404, "well-known artifact missing: openapi.yaml")
+    return Response(
+        content=_OPENAPI_YAML.read_text(encoding="utf-8"),
+        media_type="application/yaml",
+    )
 
 
 def _find_clone(clone_id: str) -> CloneSlot:

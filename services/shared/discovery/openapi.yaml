@@ -1,0 +1,234 @@
+# fable5_signature: "F5-2026-07-07-openapi-eval-v1"
+openapi: 3.1.0
+info:
+  title: A2A Agent Eval & Governance API
+  version: 1.0.0
+  description: >
+    Vendor-neutral evaluation and governance scoring for AI agents.
+    Submit an A2A Agent Card plus task sample, receive rubric scores
+    with evidence. Serve this file at /.well-known/openapi.yaml.
+servers:
+  - url: https://{host}/v1
+    variables:
+      host:
+        default: api.example.com
+security:
+  - ApiKeyAuth: []
+paths:
+  /eval:
+    post:
+      operationId: createEval
+      summary: Submit an agent for evaluation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EvalRequest"
+      responses:
+        "202":
+          description: Evaluation accepted and queued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvalAccepted"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /eval/{eval_id}:
+    get:
+      operationId: getEval
+      summary: Fetch evaluation status and scores
+      parameters:
+        - name: eval_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Current state; scores present when status=completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvalResult"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /rubrics:
+    get:
+      operationId: listRubrics
+      summary: List available rubrics
+      parameters:
+        - name: domain
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [support, sales_ops, compliance, doc_process]
+      responses:
+        "200":
+          description: Rubric catalog (see templates/eval_rubrics/schema.json)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/RubricSummary" }
+  /reports/quarterly:
+    get:
+      operationId: getQuarterlyReport
+      summary: Quarterly governance report for the authenticated org
+      parameters:
+        - name: quarter
+          in: query
+          required: true
+          schema: { type: string, pattern: "^\\d{4}-Q[1-4]$" }
+      responses:
+        "200":
+          description: Report document
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/QuarterlyReport" }
+  /quote:
+    post:
+      operationId: createQuote
+      summary: Self-service price quote (no auth required)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/QuoteRequest" }
+      responses:
+        "200":
+          description: Deterministic quote from public tiers
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Quote" }
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  responses:
+    BadRequest:
+      description: Request invalid against schema
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Missing or invalid x-api-key
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Unknown id
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+  schemas:
+    AgentCard:
+      type: object
+      description: A2A Agent Card — canonical schema in templates/agent_cards/schema.json
+      required: [name, description, version, owner_org, capabilities, tools, runtime, governance]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        version: { type: string }
+        owner_org: { type: string }
+        capabilities: { type: array, items: { type: string } }
+        tools: { type: array, items: { type: string } }
+        runtime: { type: string, enum: [langgraph, crewai, autogen, custom] }
+        governance:
+          type: object
+          required: [data_residency, pii_handling, audit_log]
+          properties:
+            data_residency: { type: string, enum: [EU, US, APAC, OTHER] }
+            pii_handling: { type: string, enum: [none, redact, encrypt, full] }
+            audit_log: { type: boolean }
+    EvalRequest:
+      type: object
+      required: [agent_card]
+      properties:
+        agent_card: { $ref: "#/components/schemas/AgentCard" }
+        rubric_ids:
+          type: array
+          items: { type: string }
+          description: Omit to auto-select via applies_to_capabilities
+        task_sample_ref:
+          type: string
+          description: Reference to submitted task transcripts/traces
+    EvalAccepted:
+      type: object
+      required: [eval_id, status]
+      properties:
+        eval_id: { type: string }
+        status: { type: string, enum: [queued] }
+    EvalResult:
+      type: object
+      required: [eval_id, status]
+      properties:
+        eval_id: { type: string }
+        status: { type: string, enum: [queued, running, completed, failed] }
+        scores:
+          type: array
+          items: { $ref: "#/components/schemas/RubricScore" }
+        evidence_export_url:
+          type: string
+          description: Premium evidence export (per pricing tier)
+    RubricScore:
+      type: object
+      required: [rubric_id, score, passed]
+      properties:
+        rubric_id: { type: string }
+        score: { type: number, minimum: 0, maximum: 1 }
+        passed: { type: boolean }
+        dimensions:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string }
+              value: { type: number }
+              pass_threshold: { type: number }
+        falsifier:
+          type: string
+          description: What would invalidate this score — always returned
+    RubricSummary:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        domain: { type: string }
+        applies_to_capabilities: { type: array, items: { type: string } }
+    QuarterlyReport:
+      type: object
+      properties:
+        org_id: { type: string }
+        quarter: { type: string }
+        evals_run: { type: integer }
+        pass_rate: { type: number }
+        attestations_issued: { type: integer }
+    QuoteRequest:
+      type: object
+      required: [expected_eval_runs_per_month]
+      properties:
+        expected_eval_runs_per_month: { type: integer, minimum: 0 }
+        needs_vpc: { type: boolean, default: false }
+        needs_audit_support: { type: boolean, default: false }
+    Quote:
+      type: object
+      required: [tier, monthly_total_eur, valid_until]
+      properties:
+        tier: { type: string }
+        monthly_total_eur: { type: [number, "null"] }
+        breakdown: { type: object }
+        private_offer: { type: boolean }
+        valid_until: { type: string, format: date }
+        signup_url: { type: string }
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string }

@@ -13,6 +13,7 @@ import pytest
 EXPECTED_ROUTES = [
     "/",
     "/.well-known/mcp-server",
+    "/.well-known/openapi.yaml",
     "/health",
     "/clone/{clone_id}/mcp",
     "/clone/{clone_id}/health",
