@@ -1,6 +1,6 @@
 {
-  "fable5_signature": "F5-2026-08-15-audit-bazaar-pay2go-pricing",
-  "$comment": "Machine-readable Pay2Go pricing. Source of truth: examples/audit_bazaar_clones/clone_A_eu_ai_act_manifest.json monetization. No invented EUR pack prices — SS4 reconciles landing vs tiers.",
+  "fable5_signature": "F5-2026-08-15-audit-bazaar-pay2go-pricing-lock",
+  "$comment": "LOCKED 2026-08-15 (NichenRun9). Free 100 / Solo $29@1k / Pro $99@5k recommended / Team EUR 249@15k / overage $0.05. Source: NichenRun9_PricingMarketSanityCheck.md. Team checkout is Stripe LIVE EUR; Solo/Pro USD until EUR prices minted.",
   "currency": "USD",
   "public": true,
   "overage_disclosed": true,
@@ -12,31 +12,39 @@
   "self_service_signup": "https://a2a-meta-clones-production.up.railway.app/static/audit-bazaar.html",
   "private_offer_contact": "hallo@withkodex.com",
   "quote_endpoint": null,
+  "recommended_tier_id": "pro",
   "volumeTiers": [
     {
       "id": "free",
-      "upTo": 500,
+      "upTo": 100,
       "amount_per_month": 0,
       "amount_per_unit": 0,
-      "included_calls_per_month": 500
+      "included_calls_per_month": 100,
+      "best_for": "Agent sandbox / discovery try-path"
     },
     {
       "id": "solo",
-      "upTo": 500,
-      "amount_per_month": 24,
-      "included_calls_per_month": 500
+      "upTo": 1000,
+      "amount_per_month": 29,
+      "included_calls_per_month": 1000,
+      "best_for": "Indie / single-agent production"
     },
     {
       "id": "pro",
-      "upTo": 3000,
-      "amount_per_month": 89,
-      "included_calls_per_month": 3000
+      "upTo": 5000,
+      "amount_per_month": 99,
+      "included_calls_per_month": 5000,
+      "recommended": true,
+      "best_for": "Growing teams; recommended self-serve"
     },
     {
       "id": "team",
       "upTo": 15000,
       "amount_per_month": 249,
-      "included_calls_per_month": 15000
+      "amount_currency": "EUR",
+      "included_calls_per_month": 15000,
+      "best_for": "Compliance teams; Stripe LIVE Team price",
+      "stripe_live_price_note": "TEAM_PRICE_ID is EUR 249/mo recurring"
     }
   ],
   "overage": {
@@ -54,6 +62,6 @@
   },
   "licenseTerms": null,
   "rateLimits": {
-    "note": "Exact RPM TBD at live cutover; free tier soft-cap = included_calls_per_month"
+    "note": "Free soft-cap = included_calls_per_month; paid tiers soft-cap then overage"
   }
 }
