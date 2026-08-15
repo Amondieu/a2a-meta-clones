@@ -10,6 +10,7 @@ env, loads the clone specs, and exposes:
   - GET  /.well-known/trust-signals.json — ledger-verified claims only
   - GET  /.well-known/attestation.json — attestation pointer
   - GET  /.well-known/openapi.yaml    — OpenAPI 3.1 Eval API contract
+  - GET  /static/audit-bazaar.html    — human landing / pricing page
   - GET  /clone/{id}/mcp              — clone manifest (per clone)
   - GET  /clone/{id}/health           — health check
   - GET  /clone/{id}/tools            — list of tool definitions
@@ -32,7 +33,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel
 
 
@@ -171,6 +172,7 @@ def root() -> Dict[str, Any]:
             "trust_signals": "/.well-known/trust-signals.json",
             "attestation": "/.well-known/attestation.json",
             "openapi": "/.well-known/openapi.yaml",
+            "landing": "/static/audit-bazaar.html",
             "clone_manifest": "/clone/{id}/mcp",
             "clone_health": "/clone/{id}/health",
             "clone_tools": "/clone/{id}/tools",
@@ -189,6 +191,8 @@ _WELL_KNOWN_AUDIT_BAZAAR = (
     / "audit_bazaar"
 )
 _OPENAPI_YAML = Path(__file__).resolve().parent.parent / "discovery" / "openapi.yaml"
+_STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+_LANDING_HTML = _STATIC_DIR / "audit-bazaar.html"
 
 
 def _load_well_known(filename: str) -> Dict[str, Any]:
@@ -216,6 +220,7 @@ def well_known() -> Dict[str, Any]:
             "trust_signals": "/.well-known/trust-signals.json",
             "attestation": "/.well-known/attestation.json",
             "openapi": "/.well-known/openapi.yaml",
+            "landing": "/static/audit-bazaar.html",
         },
         "servers": [
             {
@@ -275,6 +280,14 @@ def well_known_openapi() -> Response:
         content=_OPENAPI_YAML.read_text(encoding="utf-8"),
         media_type="application/yaml",
     )
+
+
+@app.get("/static/audit-bazaar.html")
+def static_audit_bazaar_landing() -> FileResponse:
+    """Human landing + pricing page (Pay2Go ladder; ledger-safe claims)."""
+    if not _LANDING_HTML.is_file():
+        raise HTTPException(404, "landing page missing: static/audit-bazaar.html")
+    return FileResponse(_LANDING_HTML, media_type="text/html; charset=utf-8")
 
 
 def _find_clone(clone_id: str) -> CloneSlot:

@@ -19,17 +19,19 @@ jobs:
 
       - name: Deploy a2a-meta-clones
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+          RAILWAY_PROJECT_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           set -euo pipefail
-          if [ -z "${RAILWAY_TOKEN:-}" ]; then
-            echo "RAILWAY_TOKEN secret missing" >&2
+          # Account token works with CLI; project tokens often fail whoami/up.
+          export RAILWAY_TOKEN="${RAILWAY_API_TOKEN:-${RAILWAY_PROJECT_TOKEN:-}}"
+          if [ -z "${RAILWAY_TOKEN}" ]; then
+            echo "Set GitHub secret RAILWAY_API_TOKEN (account token) or RAILWAY_TOKEN" >&2
             exit 1
           fi
-          # Link by project id when provided; otherwise rely on railway.toml / prior link.
           if [ -n "${RAILWAY_PROJECT_ID:-}" ]; then
-            railway link --project "$RAILWAY_PROJECT_ID" --environment production --yes || true
+            railway link --project "$RAILWAY_PROJECT_ID" --environment production || true
           fi
           railway up --service a2a-meta-clones --detach
           railway up --service a2a-meta-clones-slot-2 --detach

@@ -14,6 +14,7 @@ EXPECTED_ROUTES = [
     "/",
     "/.well-known/mcp-server",
     "/.well-known/openapi.yaml",
+    "/static/audit-bazaar.html",
     "/health",
     "/clone/{clone_id}/mcp",
     "/clone/{clone_id}/health",
