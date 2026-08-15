@@ -178,6 +178,7 @@ def root() -> Dict[str, Any]:
             "attestation": "/.well-known/attestation.json",
             "openapi": "/.well-known/openapi.yaml",
             "landing": "/static/audit-bazaar.html",
+            "health": "/health",
             "stripe_checkout": "/api/stripe/checkout",
             "stripe_webhook": "/api/stripe/webhook",
             "stripe_team_webhook": "/api/stripe/team-webhook",
@@ -187,6 +188,16 @@ def root() -> Dict[str, Any]:
             "clone_invoke": "/clone/{id}/invoke/{tool_name}",
         },
         "irreversible_actions": False,  # read-only in slice 1
+    }
+
+
+@app.get("/health")
+def health() -> Dict[str, Any]:
+    return {
+        "status": "ok",
+        "service": "gold-seed-multiplexer",
+        "version": app.version,
+        "clones_hosted": len(clones),
     }
 
 
