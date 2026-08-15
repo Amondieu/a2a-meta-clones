@@ -3,7 +3,7 @@
   "parent_id": "seed-meta-nucleus-v1",
   "generation": 2,
   "name": "Agent Lens",
-  "tagline": "94/100 · EU-native · NIST AI RMF 1.0",
+  "tagline": "94/100 \u00b7 EU-native \u00b7 NIST AI RMF 1.0",
   "description": "Enterprises cannot address agent identity and least agency authorization: Agents run under shared or over-privileged service accounts lacking distinct identities; enterprises cannot apply fine-grained access controls or limit autonomy beyond simple permission scopes.",
   "archetype_class": "AuditorScribe",
   "gap_name": "Agent Identity and Least Agency Authorization",
@@ -18,29 +18,52 @@
   "mcp_path": "/clone/agent-lens/mcp",
   "exposed_tools": [
     {
-      "name": "run_reconciliation_audit",
-      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "name": "assess_agent_identity",
+      "description": "Assess agent identity and least-agency authorization (distinct ID, shared accounts, scopes, owners). Deterministic.",
+      "tier": "logic",
       "parameters": {
-        "payload": {
-          "type": "string",
-          "description": "The ledger transaction entries in string format.",
-          "required": true,
-          "default": null
+        "agent_id": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array"
+        },
+        "scopes": {
+          "type": "array"
+        },
+        "shared_account": {
+          "type": "boolean"
+        },
+        "human_owner": {
+          "type": "string"
         }
       },
-      "tier": "logic",
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-          "payload": {
-            "type": "string",
-            "description": "The ledger transaction entries in string format."
+          "agent_id": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "shared_account": {
+            "type": "boolean"
+          },
+          "human_owner": {
+            "type": "string"
           }
-        },
-        "required": [
-          "payload"
-        ]
+        }
       }
     }
   ],
@@ -87,8 +110,8 @@
       "heavy": "kore-builder",
       "heavy_fallback": "deepseek-flash"
     },
-    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+    "direct_provider_calls": "forbidden (SOUL.md \u00a70.5)"
   },
   "parent_tension_id": null,
-  "checksum": "dbbb7ee233b87f3ca43fa1e21be4a6f6c55b24dcdb1e3674f6de4d4467b9dd3a"
+  "checksum": "9b1c5faea256df589c57f2e8b5241709748c0965338927ca201349d945a65074"
 }

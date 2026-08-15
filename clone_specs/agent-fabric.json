@@ -3,7 +3,7 @@
   "parent_id": "seed-meta-nucleus-v1",
   "generation": 2,
   "name": "Agent Fabric",
-  "tagline": "94/100 · EU-native · MCP threat modeling",
+  "tagline": "94/100 \u00b7 EU-native \u00b7 MCP threat modeling",
   "description": "Enterprises cannot address agent-native security posture & mcp threat modeling: Lack of tools to model, monitor, and control agent-specific security risks, including MCP serialization vulnerabilities, dynamic permissions, and tool abuse; dependence on generic application security that does not understand agent workflows.",
   "archetype_class": "AuditorScribe",
   "gap_name": "Agent-Native Security Posture & MCP Threat Modeling",
@@ -18,29 +18,40 @@
   "mcp_path": "/clone/agent-fabric/mcp",
   "exposed_tools": [
     {
-      "name": "run_reconciliation_audit",
-      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "name": "assess_mcp_threat_posture",
+      "description": "Score MCP tool surfaces for agent-native security risks (dangerous tools, secrets, overbroad perms, open egress). Deterministic; NIST AI RMF aligned.",
+      "tier": "logic",
       "parameters": {
-        "payload": {
+        "tools": {
+          "type": "array",
+          "required": false
+        },
+        "permissions": {
+          "type": "array",
+          "required": false
+        },
+        "network_egress": {
           "type": "string",
-          "description": "The ledger transaction entries in string format.",
-          "required": true,
-          "default": null
+          "required": false
         }
       },
-      "tier": "logic",
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-          "payload": {
-            "type": "string",
-            "description": "The ledger transaction entries in string format."
+          "tools": {
+            "type": "array"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "network_egress": {
+            "type": "string"
           }
-        },
-        "required": [
-          "payload"
-        ]
+        }
       }
     }
   ],
@@ -87,8 +98,8 @@
       "heavy": "kore-builder",
       "heavy_fallback": "deepseek-flash"
     },
-    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+    "direct_provider_calls": "forbidden (SOUL.md \u00a70.5)"
   },
   "parent_tension_id": null,
-  "checksum": "cef157406610ddde29de09f2fa1542ee80ef73c68a6416495a8129760e69aa9c"
+  "checksum": "7d250708780b3d596cdb76f1eb6c5dec6fcccfbd587d1b1d5e5e17ae4ec23604"
 }

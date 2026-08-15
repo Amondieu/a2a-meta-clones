@@ -648,14 +648,23 @@ def clone_invoke(
 
     tier = tool.get("tier")
     if tier == "logic":
-        # Pure-Python execution surface. The baseline AuditorScribe scaffold
-        # is a deterministic payload processor; no LLM is ever consulted.
+        from services.shared.clone_logic import dispatch as logic_dispatch
+
+        try:
+            result = logic_dispatch(c.clone_id, tool_name, payload or {})
+        except KeyError:
+            raise HTTPException(
+                501,
+                f"logic tool {tool_name!r} not wired for clone {clone_id!r}",
+            )
+        except ValueError as e:
+            raise HTTPException(400, str(e))
         return {
             "clone_id": c.clone_id,
             "tool": tool_name,
             "status": "ok",
             "tier": "logic",
-            "result": {"processed": True, "input_keys": sorted(payload.keys())},
+            "result": result,
             "llm_called": False,
         }
 

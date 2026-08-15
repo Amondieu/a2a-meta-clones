@@ -3,7 +3,7 @@
   "parent_id": "seed-meta-nucleus-v1",
   "generation": 2,
   "name": "Compliance Lens",
-  "tagline": "94/100 · EU-native · Compliance system cards",
+  "tagline": "94/100 \u00b7 EU-native \u00b7 Compliance system cards",
   "description": "Enterprises cannot address compliance-grade agent metadata and system cards: Risk and compliance teams cannot reliably determine underlying models, GPAI systemic risk status, training data summaries, or performance metrics, preventing mapping to NIST AI RMF, ISO 42001 inventories, and SOC 2 risk matrices.",
   "archetype_class": "AuditorScribe",
   "gap_name": "Compliance-Grade Agent Metadata and System Cards",
@@ -20,29 +20,61 @@
   "mcp_path": "/clone/compliance-lens/mcp",
   "exposed_tools": [
     {
-      "name": "run_reconciliation_audit",
-      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "name": "build_compliance_system_card",
+      "description": "Build a compliance-grade agent system card (model, training summary, metrics, GPAI systemic risk) mapped to NIST/ISO/SOC2. Deterministic.",
+      "tier": "logic",
       "parameters": {
-        "payload": {
-          "type": "string",
-          "description": "The ledger transaction entries in string format.",
-          "required": true,
-          "default": null
+        "agent_name": {
+          "type": "string"
+        },
+        "underlying_model": {
+          "type": "string"
+        },
+        "training_data_summary": {
+          "type": "string"
+        },
+        "intended_use": {
+          "type": "string"
+        },
+        "performance_metrics": {
+          "type": "object"
+        },
+        "gpai_systemic_risk": {
+          "type": "boolean"
+        },
+        "frameworks": {
+          "type": "array"
         }
       },
-      "tier": "logic",
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-          "payload": {
-            "type": "string",
-            "description": "The ledger transaction entries in string format."
+          "agent_name": {
+            "type": "string"
+          },
+          "underlying_model": {
+            "type": "string"
+          },
+          "training_data_summary": {
+            "type": "string"
+          },
+          "intended_use": {
+            "type": "string"
+          },
+          "performance_metrics": {
+            "type": "object"
+          },
+          "gpai_systemic_risk": {
+            "type": "boolean"
+          },
+          "frameworks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
-        },
-        "required": [
-          "payload"
-        ]
+        }
       }
     }
   ],
@@ -89,8 +121,8 @@
       "heavy": "kore-builder",
       "heavy_fallback": "deepseek-flash"
     },
-    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+    "direct_provider_calls": "forbidden (SOUL.md \u00a70.5)"
   },
   "parent_tension_id": null,
-  "checksum": "bf8c61c46837122371e6df14b7487d84c5b02289e3f5a6893f28b61fb6c22db9"
+  "checksum": "e11b6e8f3599c19ed94f1ef4c693e478aa7388b497b9bbbdc01e52de88a21536"
 }

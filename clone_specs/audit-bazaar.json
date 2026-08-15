@@ -3,7 +3,7 @@
   "parent_id": "seed-meta-nucleus-v1",
   "generation": 1,
   "name": "Audit Bazaar",
-  "tagline": "94/100 · EU-native · SOC 2 Type II ready",
+  "tagline": "94/100 \u00b7 EU-native \u00b7 SOC 2 Type II ready",
   "description": "Enterprises cannot address audit-ready evidence for marketplace agents as third-party services: Enterprises cannot collect immutable logs, drift checks, or PII flow evidence for marketplace-sourced agents because marketplaces lack standardized telemetry exports required for SOC 2 third-party risk management.",
   "archetype_class": "AuditorScribe",
   "gap_name": "Audit-Ready Evidence for Marketplace Agents as Third-Party Services",
@@ -18,28 +18,68 @@
   "mcp_path": "/clone/audit-bazaar/mcp",
   "exposed_tools": [
     {
-      "name": "run_reconciliation_audit",
-      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "name": "run_eu_ai_act_deployer_evidence",
+      "description": "Evaluate deployer obligations Art. 26(4)-(7) + Art. 50 against operational evidence sources. Deterministic; zero LLM.",
+      "tier": "logic",
       "parameters": {
-        "payload": {
+        "deployment_id": {
           "type": "string",
-          "description": "The ledger transaction entries in string format.",
-          "required": true,
-          "default": null
+          "required": true
+        },
+        "scope": {
+          "type": "string",
+          "description": "YYYY-MM",
+          "required": true
+        },
+        "sources": {
+          "type": "array",
+          "required": true
         }
       },
-      "tier": "logic",
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-          "payload": {
-            "type": "string",
-            "description": "The ledger transaction entries in string format."
+          "deployment_id": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           }
         },
         "required": [
-          "payload"
+          "deployment_id",
+          "scope",
+          "sources"
+        ]
+      }
+    },
+    {
+      "name": "get_compliance_posture",
+      "description": "Project evidence.json to compliance_posture.json (deterministic).",
+      "tier": "logic",
+      "parameters": {
+        "evidence": {
+          "type": "object",
+          "required": true
+        }
+      },
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "evidence"
         ]
       }
     }
@@ -87,8 +127,8 @@
       "heavy": "kore-builder",
       "heavy_fallback": "deepseek-flash"
     },
-    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+    "direct_provider_calls": "forbidden (SOUL.md \u00a70.5)"
   },
   "parent_tension_id": null,
-  "checksum": "a861d518d7b28867ac6efb1192146328f2bf2c12d8da055026bafe5ef4ab96bb"
+  "checksum": "3e3c2fb048ff1e92cee0e8f04b922f5722a40c5fc0737541ea7b75f859427878"
 }

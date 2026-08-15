@@ -3,7 +3,7 @@
   "parent_id": "seed-meta-nucleus-v1",
   "generation": 2,
   "name": "Agent Ledger",
-  "tagline": "94/100 · EU-native · Shadow AI supply chain",
+  "tagline": "94/100 \u00b7 EU-native \u00b7 Shadow AI supply chain",
   "description": "Enterprises cannot address shadow ai agents and supply chain risk: Autonomous agents and AI-powered workflows deployed outside formal approval channels bypass data security controls; sensitive data moves through unvetted MCP servers and third-party models.",
   "archetype_class": "AuditorScribe",
   "gap_name": "Shadow AI Agents and Supply Chain Risk",
@@ -18,29 +18,40 @@
   "mcp_path": "/clone/agent-ledger/mcp",
   "exposed_tools": [
     {
-      "name": "run_reconciliation_audit",
-      "description": "Processes raw accounting transaction balance payloads to extract anomalies and mismatching entries.",
+      "name": "scan_shadow_ai_inventory",
+      "description": "Scan discovered agents for shadow AI / unvetted MCP servers and models vs approved allowlists. Deterministic.",
+      "tier": "logic",
       "parameters": {
-        "payload": {
-          "type": "string",
-          "description": "The ledger transaction entries in string format.",
-          "required": true,
-          "default": null
+        "discovered_agents": {
+          "type": "array"
+        },
+        "approved_mcp_servers": {
+          "type": "array"
+        },
+        "approved_models": {
+          "type": "array"
         }
       },
-      "tier": "logic",
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-          "payload": {
-            "type": "string",
-            "description": "The ledger transaction entries in string format."
+          "discovered_agents": {
+            "type": "array"
+          },
+          "approved_mcp_servers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "approved_models": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
-        },
-        "required": [
-          "payload"
-        ]
+        }
       }
     }
   ],
@@ -87,8 +98,8 @@
       "heavy": "kore-builder",
       "heavy_fallback": "deepseek-flash"
     },
-    "direct_provider_calls": "forbidden (SOUL.md §0.5)"
+    "direct_provider_calls": "forbidden (SOUL.md \u00a70.5)"
   },
   "parent_tension_id": null,
-  "checksum": "e30ea4d0e434791fcdaf83de4c35a1374704491ac5b62baea21a00d15d16f745"
+  "checksum": "baa62b4470641a4d402fb3336a57086899549184adcfc1320c0e21fa22d8287a"
 }
