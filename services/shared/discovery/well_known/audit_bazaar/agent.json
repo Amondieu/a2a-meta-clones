@@ -1,0 +1,35 @@
+{
+  "fable5_signature": "F5-2026-08-15-audit-bazaar-discovery-agent",
+  "$comment": "Fable-5 Discovery Bundle entry. Serve at /.well-known/agent.json. Complements agent-card.json (A2A v1 skills shape).",
+  "name": "audit-bazaar EU AI Act Deployer Evidence",
+  "description": "Deterministic EU AI Act deployer evidence loop. Zero LLM. Byte-identical evidence packs (JSON + PDF + SHA256 + replay).",
+  "version": "0.2.0",
+  "owner_org": "A2A-Meta",
+  "capabilities": [
+    "eu_ai_act_deployer_evidence",
+    "compliance_posture_projection",
+    "deterministic_replay"
+  ],
+  "tools": [
+    "run_eu_ai_act_deployer_evidence",
+    "get_compliance_posture"
+  ],
+  "runtime": "custom",
+  "governance": {
+    "data_residency": "EU",
+    "pii_handling": "redact",
+    "audit_log": true
+  },
+  "endpoints": {
+    "a2a": "https://a2a-meta-clones-production.up.railway.app/",
+    "mcp": "https://a2a-meta-clones-production.up.railway.app/clone/audit-bazaar/mcp"
+  },
+  "discovery": {
+    "openapi_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/openapi.yaml",
+    "pricing_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/pricing.json",
+    "attestation_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/attestation.json",
+    "trust_signals_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/trust-signals.json",
+    "agent_card_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/agent-card.json",
+    "trust_pack_url": "https://a2a-meta-clones-production.up.railway.app/static/audit-bazaar.html"
+  }
+}

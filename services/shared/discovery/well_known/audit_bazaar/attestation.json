@@ -1,0 +1,17 @@
+{
+  "fable5_signature": "F5-2026-08-15-audit-bazaar-attestation-pointer",
+  "$comment": "Pointer only — full attestation schema lives in templates/attestation/. No forged signatures.",
+  "current_attestation_url": null,
+  "attestation_schema": "templates/attestation/schema.json",
+  "example_attestation": "templates/attestation/example_attestation.json",
+  "issuer": "A2A-Meta",
+  "status": "template_only_not_production_signed",
+  "verification": {
+    "method": "none_until_signed",
+    "public_key_url": null
+  },
+  "related": {
+    "trust_signals_url": "/.well-known/trust-signals.json",
+    "proof_points_ledger": "docs/proof-points-ledger.md"
+  }
+}

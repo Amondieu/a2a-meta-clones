@@ -4,6 +4,11 @@ Reads CLONE_A_ID / CLONE_A_MANIFEST_PATH / CLONE_A_STRIPE_KEY (and B, C) from
 env, loads the clone specs, and exposes:
   - GET  /                            — service info
   - GET  /.well-known/mcp-server      — IETF draft-serra-mcp-discovery-uri-01
+  - GET  /.well-known/agent-card.json — A2A v1.0 machine-buyer Agent Card
+  - GET  /.well-known/agent.json      — Fable-5 Discovery Bundle entry
+  - GET  /.well-known/pricing.json    — Pay2Go quotable pricing
+  - GET  /.well-known/trust-signals.json — ledger-verified claims only
+  - GET  /.well-known/attestation.json — attestation pointer
   - GET  /clone/{id}/mcp              — clone manifest (per clone)
   - GET  /clone/{id}/health           — health check
   - GET  /clone/{id}/tools            — list of tool definitions
@@ -159,6 +164,11 @@ def root() -> Dict[str, Any]:
         ],
         "endpoints": {
             "well_known": "/.well-known/mcp-server",
+            "agent_card": "/.well-known/agent-card.json",
+            "agent_json": "/.well-known/agent.json",
+            "pricing": "/.well-known/pricing.json",
+            "trust_signals": "/.well-known/trust-signals.json",
+            "attestation": "/.well-known/attestation.json",
             "clone_manifest": "/clone/{id}/mcp",
             "clone_health": "/clone/{id}/health",
             "clone_tools": "/clone/{id}/tools",
@@ -166,6 +176,23 @@ def root() -> Dict[str, Any]:
         },
         "irreversible_actions": False,  # read-only in slice 1
     }
+
+
+# Machine-buyer discovery (NichenRun7): dual Agent Card + Pay2Go + trust signals.
+# Packaged beside the multiplexer so the Docker image includes them.
+_WELL_KNOWN_AUDIT_BAZAAR = (
+    Path(__file__).resolve().parent.parent
+    / "discovery"
+    / "well_known"
+    / "audit_bazaar"
+)
+
+
+def _load_well_known(filename: str) -> Dict[str, Any]:
+    path = _WELL_KNOWN_AUDIT_BAZAAR / filename
+    if not path.is_file():
+        raise HTTPException(404, f"well-known artifact missing: {filename}")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 @app.get("/.well-known/mcp-server")
@@ -179,6 +206,13 @@ def well_known() -> Dict[str, Any]:
         "service": app.title,
         "version": app.version,
         "transport": "http+sse",
+        "discovery": {
+            "agent_card": "/.well-known/agent-card.json",
+            "agent_json": "/.well-known/agent.json",
+            "pricing": "/.well-known/pricing.json",
+            "trust_signals": "/.well-known/trust-signals.json",
+            "attestation": "/.well-known/attestation.json",
+        },
         "servers": [
             {
                 "name": c.clone_id,
@@ -196,6 +230,36 @@ def well_known() -> Dict[str, Any]:
             for c in clones
         ],
     }
+
+
+@app.get("/.well-known/agent-card.json")
+def well_known_agent_card() -> Dict[str, Any]:
+    """A2A v1.0-shaped Agent Card for machine buyers (skills + interfaces)."""
+    return _load_well_known("agent-card.json")
+
+
+@app.get("/.well-known/agent.json")
+def well_known_agent_json() -> Dict[str, Any]:
+    """Fable-5 Discovery Bundle entry (complements agent-card.json)."""
+    return _load_well_known("agent.json")
+
+
+@app.get("/.well-known/pricing.json")
+def well_known_pricing() -> Dict[str, Any]:
+    """Pay2Go pricing — quotable before call; tiers from clone manifest."""
+    return _load_well_known("pricing.json")
+
+
+@app.get("/.well-known/trust-signals.json")
+def well_known_trust_signals() -> Dict[str, Any]:
+    """Ledger-verified claims only (no forged certifications)."""
+    return _load_well_known("trust-signals.json")
+
+
+@app.get("/.well-known/attestation.json")
+def well_known_attestation() -> Dict[str, Any]:
+    """Attestation pointer — template_only until production-signed."""
+    return _load_well_known("attestation.json")
 
 
 def _find_clone(clone_id: str) -> CloneSlot:

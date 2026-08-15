@@ -1,0 +1,68 @@
+{
+  "fable5_signature": "F5-2026-08-15-audit-bazaar-trust-signals",
+  "$comment": "Only ledger-verified claims (docs/proof-points-ledger.md Verification-Status=✅ and In-Sales-OK=YES). No A2Apex/SOC2 badges until earned.",
+  "schema_version": "1.0.0",
+  "service": "audit-bazaar",
+  "updated": "2026-08-15",
+  "alpha_status": true,
+  "external_certifications": [],
+  "verified_claims": [
+    {
+      "id": "five_deployer_obligations",
+      "claim": "5 deployer obligations (Art. 26(4)-(7) + Art. 50) evaluated per run",
+      "status": "verified",
+      "in_sales_ok": true
+    },
+    {
+      "id": "deterministic_replay",
+      "claim": "100% deterministic replay (same inputs → byte-identical output)",
+      "status": "verified",
+      "in_sales_ok": true
+    },
+    {
+      "id": "zero_llm_evidence_path",
+      "claim": "Zero LLM in the evidence path",
+      "status": "verified",
+      "in_sales_ok": true
+    },
+    {
+      "id": "controls_evaluated",
+      "claim": "N controls verified per run (controls_evaluated in every output)",
+      "status": "verified",
+      "in_sales_ok": true
+    },
+    {
+      "id": "scale_1_5m_events",
+      "claim": "1.5M+ events supported per evaluation (aggregated counters)",
+      "status": "verified",
+      "in_sales_ok": true
+    },
+    {
+      "id": "pdf_under_5mb",
+      "claim": "PDF < 5MB",
+      "status": "verified",
+      "in_sales_ok": true
+    },
+    {
+      "id": "byte_identical_pdf",
+      "claim": "Byte-identical PDF (fixed metadata, deterministic writer)",
+      "status": "verified",
+      "in_sales_ok": true
+    }
+  ],
+  "not_claimed": [
+    "hours_saved_per_run",
+    "five_min_setup",
+    "works_with_existing_s3",
+    "production_ready",
+    "august_2026_ready"
+  ],
+  "ledger_url": "docs/proof-points-ledger.md",
+  "stats": {
+    "note": "Live aggregate stats endpoint deferred until metered invoke is live",
+    "total_calls": null,
+    "success_rate": null,
+    "avg_latency_ms": null
+  },
+  "uptime_sla": null
+}

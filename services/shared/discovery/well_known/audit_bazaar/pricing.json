@@ -1,0 +1,59 @@
+{
+  "fable5_signature": "F5-2026-08-15-audit-bazaar-pay2go-pricing",
+  "$comment": "Machine-readable Pay2Go pricing. Source of truth: examples/audit_bazaar_clones/clone_A_eu_ai_act_manifest.json monetization. No invented EUR pack prices — SS4 reconciles landing vs tiers.",
+  "currency": "USD",
+  "public": true,
+  "overage_disclosed": true,
+  "billing_unit": "evidence_call",
+  "unit_aliases": ["per_evidence_pack", "per_invoke"],
+  "quotable_before_call": true,
+  "paymentMethods": ["stripe"],
+  "refundPolicy": "failed_invokes_not_metered",
+  "self_service_signup": "https://a2a-meta-clones-production.up.railway.app/static/audit-bazaar.html",
+  "private_offer_contact": "hallo@withkodex.com",
+  "quote_endpoint": null,
+  "volumeTiers": [
+    {
+      "id": "free",
+      "upTo": 500,
+      "amount_per_month": 0,
+      "amount_per_unit": 0,
+      "included_calls_per_month": 500
+    },
+    {
+      "id": "solo",
+      "upTo": 500,
+      "amount_per_month": 24,
+      "included_calls_per_month": 500
+    },
+    {
+      "id": "pro",
+      "upTo": 3000,
+      "amount_per_month": 89,
+      "included_calls_per_month": 3000
+    },
+    {
+      "id": "team",
+      "upTo": 15000,
+      "amount_per_month": 249,
+      "included_calls_per_month": 15000
+    }
+  ],
+  "overage": {
+    "amount_per_unit": 0.05,
+    "metered": true,
+    "unit": "evidence_call"
+  },
+  "pilot_offer": {
+    "description": "Human-buyer pilot SKU (not auto-metered Pay2Go). Ledger-safe deliverables only.",
+    "currency": "EUR",
+    "amount_range": [8000, 25000],
+    "delivery_days": 14,
+    "contact": "hallo@withkodex.com",
+    "claims_policy": "docs/proof-points-ledger.md"
+  },
+  "licenseTerms": null,
+  "rateLimits": {
+    "note": "Exact RPM TBD at live cutover; free tier soft-cap = included_calls_per_month"
+  }
+}

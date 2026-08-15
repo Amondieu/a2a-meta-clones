@@ -1,0 +1,62 @@
+{
+  "fable5_signature": "F5-2026-08-15-audit-bazaar-a2a-v1-card",
+  "$comment": "A2A v1.0-shaped Agent Card for machine buyers. Serve at /.well-known/agent-card.json. Claims limited to docs/proof-points-ledger.md ✅|YES rows.",
+  "name": "audit-bazaar EU AI Act Deployer Evidence",
+  "description": "Deterministic deployer evidence packs for EU AI Act Art. 26(4)-(7) + Art. 50. Zero LLM in the evidence path. Same inputs yield byte-identical JSON/PDF/SHA256/replay artifacts.",
+  "version": "0.2.0",
+  "provider": {
+    "organization": "A2A-Meta / Dyson",
+    "url": "https://a2a-meta-clones-production.up.railway.app",
+    "contactEmail": "hallo@withkodex.com"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "skills": [
+    {
+      "id": "eu-ai-act-evidence-pack",
+      "name": "EU AI Act Deployer Evidence Pack",
+      "description": "Evaluates five deployer obligations (Art. 26(4)-(7) + Art. 50) against operational evidence sources. Emits evidence.json, compliance_posture.json, evidence.pdf (<5MB), evidence.sha256, replay_command.json. Deterministic replay; zero LLM.",
+      "tags": ["compliance", "eu-ai-act", "evidence", "audit", "deployer"],
+      "examples": [
+        "Monthly evidence pack for high-risk support-triage deployment",
+        "Replay prior audit_id and verify byte-identical PDF + SHA256"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json", "application/pdf"]
+    },
+    {
+      "id": "compliance-posture",
+      "name": "Compliance Posture Projection",
+      "description": "Derives compliance_posture.json from an evidence.json payload. Deterministic projection — no LLM.",
+      "tags": ["compliance", "posture", "eu-ai-act"],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    }
+  ],
+  "supportedInterfaces": [
+    {
+      "url": "https://a2a-meta-clones-production.up.railway.app/clone/audit-bazaar/mcp",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "defaultInputModes": ["application/json", "text/plain"],
+  "defaultOutputModes": ["application/json", "application/pdf"],
+  "securitySchemes": {
+    "apiKey": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "x-api-key"
+    }
+  },
+  "documentationUrl": "https://a2a-meta-clones-production.up.railway.app/.well-known/openapi.yaml",
+  "discovery": {
+    "pricing_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/pricing.json",
+    "trust_signals_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/trust-signals.json",
+    "attestation_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/attestation.json",
+    "agent_json_url": "https://a2a-meta-clones-production.up.railway.app/.well-known/agent.json",
+    "mcp_well_known": "https://a2a-meta-clones-production.up.railway.app/.well-known/mcp-server"
+  }
+}
