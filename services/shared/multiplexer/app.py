@@ -201,6 +201,7 @@ _WELL_KNOWN_AUDIT_BAZAAR = (
 _OPENAPI_YAML = Path(__file__).resolve().parent.parent / "discovery" / "openapi.yaml"
 _STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 _LANDING_HTML = _STATIC_DIR / "audit-bazaar.html"
+_LEGAL_DIR = Path(__file__).resolve().parent.parent / "legal"
 
 
 def _load_well_known(filename: str) -> Dict[str, Any]:
@@ -296,6 +297,31 @@ def static_audit_bazaar_landing() -> FileResponse:
     if not _LANDING_HTML.is_file():
         raise HTTPException(404, "landing page missing: static/audit-bazaar.html")
     return FileResponse(_LANDING_HTML, media_type="text/html; charset=utf-8")
+
+
+def _legal_file(name: str) -> FileResponse:
+    path = _LEGAL_DIR / name
+    if not path.is_file():
+        raise HTTPException(404, f"legal doc missing: {name}")
+    return FileResponse(path, media_type="text/markdown; charset=utf-8")
+
+
+@app.get("/legal/PRIVACY.md")
+@app.get("/privacy")
+def legal_privacy() -> FileResponse:
+    return _legal_file("PRIVACY.md")
+
+
+@app.get("/legal/TERMS.md")
+@app.get("/terms")
+def legal_terms() -> FileResponse:
+    return _legal_file("TERMS.md")
+
+
+@app.get("/legal/IMPRESSUM.md")
+@app.get("/impressum")
+def legal_impressum() -> FileResponse:
+    return _legal_file("IMPRESSUM.md")
 
 
 class CheckoutBody(BaseModel):
