@@ -204,11 +204,41 @@ _LANDING_HTML = _STATIC_DIR / "audit-bazaar.html"
 _LEGAL_DIR = Path(__file__).resolve().parent.parent / "legal"
 
 
+_HARDCODED_BASES = (
+    "https://a2a-meta-clones-production.up.railway.app",
+    "https://a2a-meta-clones-slot-2-production.up.railway.app",
+)
+
+
+def _public_base() -> str:
+    return pay2go.public_base_url().rstrip("/")
+
+
+def _rewrite_base_urls(obj: Any, base: str) -> Any:
+    """Replace baked production URLs with this service's PUBLIC_BASE_URL."""
+    if isinstance(obj, str):
+        out = obj
+        for old in _HARDCODED_BASES:
+            if old in out:
+                out = out.replace(old, base)
+        return out
+    if isinstance(obj, list):
+        return [_rewrite_base_urls(x, base) for x in obj]
+    if isinstance(obj, dict):
+        return {k: _rewrite_base_urls(v, base) for k, v in obj.items()}
+    return obj
+
+
 def _load_well_known(filename: str) -> Dict[str, Any]:
     path = _WELL_KNOWN_AUDIT_BAZAAR / filename
     if not path.is_file():
         raise HTTPException(404, f"well-known artifact missing: {filename}")
-    return json.loads(path.read_text(encoding="utf-8"))
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return _rewrite_base_urls(data, _public_base())
+
+
+def _service_stripe_configured() -> bool:
+    return bool(_clean_env("STRIPE_SECRET_KEY"))
 
 
 @app.get("/.well-known/mcp-server")
@@ -253,7 +283,37 @@ def well_known() -> Dict[str, Any]:
 @app.get("/.well-known/agent-card.json")
 def well_known_agent_card() -> Dict[str, Any]:
     """A2A v1.0-shaped Agent Card for machine buyers (skills + interfaces)."""
-    return _load_well_known("agent-card.json")
+    card = _load_well_known("agent-card.json")
+    base = _public_base()
+    card["url"] = base
+    if isinstance(card.get("provider"), dict):
+        card["provider"]["url"] = base
+    # Advertise every clone hosted on THIS Railway service (fixes slot-2 drift).
+    card["supportedInterfaces"] = [
+        {
+            "url": f"{base}/clone/{c.clone_id}/mcp",
+            "protocolBinding": "HTTP+JSON",
+            "protocolVersion": "1.0",
+        }
+        for c in clones
+    ]
+    ids = [c.clone_id for c in clones]
+    if ids:
+        card["hosted_clones"] = ids
+        if len(ids) > 1 or (ids and ids[0] != "audit-bazaar"):
+            card["name"] = f"A2A-Meta multiplexer ({', '.join(ids)})"
+            base_desc = card.get("description") or ""
+            card["description"] = (
+                f"{base_desc} Hosted on this origin: {', '.join(ids)}."
+            ).strip()
+    disc = card.setdefault("discovery", {})
+    disc["pricing_url"] = f"{base}/.well-known/pricing.json"
+    disc["trust_signals_url"] = f"{base}/.well-known/trust-signals.json"
+    disc["attestation_url"] = f"{base}/.well-known/attestation.json"
+    disc["agent_json_url"] = f"{base}/.well-known/agent.json"
+    disc["mcp_well_known"] = f"{base}/.well-known/mcp-server"
+    card["documentationUrl"] = f"{base}/.well-known/openapi.yaml"
+    return card
 
 
 @app.get("/.well-known/agent.json")
@@ -278,6 +338,25 @@ def well_known_trust_signals() -> Dict[str, Any]:
 def well_known_attestation() -> Dict[str, Any]:
     """Attestation pointer — template_only until production-signed."""
     return _load_well_known("attestation.json")
+
+
+@app.get("/.well-known/openid-configuration")
+def well_known_openid_configuration() -> Dict[str, Any]:
+    """Crawler-friendly stub — not a full OIDC OP. Auth = apiKey x-api-key."""
+    base = _public_base()
+    return {
+        "issuer": base,
+        "a2a_agent_card": f"{base}/.well-known/agent-card.json",
+        "token_endpoint": None,
+        "authorization_endpoint": None,
+        "response_types_supported": [],
+        "subject_types_supported": [],
+        "id_token_signing_alg_values_supported": [],
+        "note": (
+            "This service is not an OpenID Provider. Machine auth for tool invoke "
+            "uses HTTP header x-api-key (see agent-card securitySchemes)."
+        ),
+    }
 
 
 @app.get("/.well-known/openapi.yaml")
@@ -401,16 +480,35 @@ def stripe_entitlements(
     email: Optional[str] = None,
     x_agent_key: Optional[str] = Header(default=None, alias="X-Agent-Key"),
 ) -> Dict[str, Any]:
-    """Lookup entitlement (MPP stub via X-Agent-Key or query params)."""
+    """Lookup entitlement (MPP stub via X-Agent-Key or query params).
+
+    Always 200 for machine buyers — missing entitlement is entitled=false,
+    not a broken endpoint (pricing.json advertises this path).
+    """
     if x_agent_key:
         ent = pay2go.agent_key_lookup(x_agent_key)
         if not ent:
-            raise HTTPException(404, "no entitlement for agent key")
-        return {"entitlement": ent, "via": "X-Agent-Key"}
+            return {
+                "entitled": False,
+                "entitlement": None,
+                "via": "X-Agent-Key",
+                "hint": "unknown or revoked agent key",
+            }
+        return {"entitled": True, "entitlement": ent, "via": "X-Agent-Key"}
+    if not customer_id and not email:
+        return {
+            "entitled": False,
+            "entitlement": None,
+            "hint": "pass customer_id, email, or X-Agent-Key",
+        }
     ent = pay2go.get_entitlement(customer_id=customer_id, email=email)
     if not ent:
-        raise HTTPException(404, "no entitlement found")
-    return {"entitlement": ent}
+        return {
+            "entitled": False,
+            "entitlement": None,
+            "hint": "no matching Stripe entitlement on file",
+        }
+    return {"entitled": True, "entitlement": ent}
 
 
 def _find_clone(clone_id: str) -> CloneSlot:
@@ -440,7 +538,8 @@ def clone_manifest(clone_id: str) -> Dict[str, Any]:
             "per_call_usd": c.stripe_price_per_call_usd,
             "currency": "USD",
             "billing_surface": "stripe",
-            "stripe_configured": c.stripe_restricted_key is not None,
+            "stripe_configured": c.stripe_restricted_key is not None
+            or _service_stripe_configured(),
         },
     }
 
@@ -448,12 +547,16 @@ def clone_manifest(clone_id: str) -> Dict[str, Any]:
 @app.get("/clone/{clone_id}/health")
 def clone_health(clone_id: str) -> Dict[str, Any]:
     c = _find_clone(clone_id)
+    per_clone = c.stripe_restricted_key is not None
+    service = _service_stripe_configured()
     return {
         "clone_id": c.clone_id,
         "status": "active",
         "archetype": c.archetype,
         "tools_count": len(c.exposed_tools),
-        "stripe_configured": c.stripe_restricted_key is not None,
+        "stripe_configured": per_clone or service,
+        "stripe_per_clone_key": per_clone,
+        "stripe_service_checkout": service,
     }
 
 

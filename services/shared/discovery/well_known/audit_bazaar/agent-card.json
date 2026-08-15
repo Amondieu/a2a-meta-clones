@@ -2,6 +2,7 @@
   "fable5_signature": "F5-2026-08-15-audit-bazaar-a2a-v1-card",
   "$comment": "A2A v1.0-shaped Agent Card for machine buyers. Serve at /.well-known/agent-card.json. Claims limited to docs/proof-points-ledger.md ✅|YES rows.",
   "name": "audit-bazaar EU AI Act Deployer Evidence",
+  "url": "https://a2a-meta-clones-production.up.railway.app",
   "description": "Deterministic deployer evidence packs for EU AI Act Art. 26(4)-(7) + Art. 50. Zero LLM in the evidence path. Same inputs yield byte-identical JSON/PDF/SHA256/replay artifacts.",
   "version": "0.2.0",
   "provider": {
